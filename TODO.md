@@ -1,0 +1,87 @@
+# Task: 创建 Prompt-Helper 对话 Agent 系统
+
+## Plan
+- [x] 步骤1: 读取关键配置文件（package.json, index.css, tailwind.config.js）
+- [x] 步骤2: 初始化 Supabase 并创建数据库结构
+  - [x] 创建 roles 表
+  - [x] 创建 prompt_templates 表
+  - [x] 创建 conversations 表
+  - [x] 创建 messages 表
+- [x] 步骤3: 创建 Edge Function 调用文心大模型API
+- [x] 步骤4: 创建类型定义和数据库API封装
+- [x] 步骤5: 安装必要的依赖包（ky, eventsource-parser, streamdown）
+- [x] 步骤6: 创建流式请求工具函数
+- [x] 步骤7: 设计并更新主题配色系统
+- [x] 步骤8: 创建核心UI组件
+- [x] 步骤9: 创建页面组件（Chat, Roles, Prompts, History）
+- [x] 步骤10: 配置路由和布局
+- [x] 步骤11: 运行 lint 验证
+- [x] 步骤12: 优化视觉风格和修复对话框遮盖问题
+  - [x] 更新主色调为科技蓝 #165DFF (217 91% 60%)
+  - [x] 添加阴影效果（shadow-panel）
+  - [x] 添加 hover 动效（hover-lift, btn-hover）
+  - [x] 优化输入框圆角（input-rounded）
+  - [x] 修复对话框 z-index 层级问题
+  - [x] 优化所有页面的交互效果
+- [x] 步骤13: 重构布局为左右分屏模式
+  - [x] 移除 shadcn/ui Sidebar 组件
+  - [x] 使用简单的 flex 布局实现左右分屏
+  - [x] 左侧：固定宽度 256px 的导航栏
+  - [x] 右侧：自适应宽度的内容区域
+  - [x] 移除所有 z-index 层级问题
+  - [x] 确保左右两侧完全独立，无重叠
+- [x] 步骤14: 修复流式对话 API 调用问题
+  - [x] 使用 useRef 保存流式内容，避免闭包问题
+  - [x] 在 onComplete 回调中使用 ref 获取完整内容
+  - [x] 添加内容为空的错误处理
+  - [x] 增强错误提示信息
+  - [x] 添加加载状态提示（AI 正在思考...）
+  - [x] 添加详细的日志输出用于调试
+- [x] 步骤15: 修复对话框滚动问题
+  - [x] 移除 ScrollArea 组件，使用原生 div 滚动
+  - [x] 添加 scrollViewportRef 引用滚动容器
+  - [x] 实现平滑滚动到底部
+  - [x] 添加自定义滚动条样式（custom-scrollbar）
+  - [x] 确保多轮对话正常显示和滚动
+- [x] 步骤16: 实现多Agent群聊与决断系统
+  - [x] 创建数据库表结构（group_sessions, group_members）
+  - [x] 扩展 conversations 和 messages 表支持群聊
+  - [x] 创建群聊管理 API
+  - [x] 创建 group-chat Edge Function（并发请求+决断官）
+  - [x] 创建群聊管理页面UI
+  - [x] 修改对话页面支持群聊模式
+  - [x] 实现多Agent并发回复展示
+  - [x] 实现决断官总结功能
+  - [x] 测试并发性能和错误处理
+
+## Notes
+- 使用文心大模型API进行流式对话
+- 需要Supabase存储角色、提示词、对话记录
+- 支持提示词分类、版本管理、导入导出
+- 支持多角色切换和对话记录搜索
+- 所有依赖包已存在于 package.json 中
+- Lint 验证通过，所有功能已完成
+- 视觉风格已统一，使用科技蓝主色调
+- 所有对话框设置 z-index: 9999，确保不被遮盖
+- 添加了丰富的 hover 动效和过渡效果
+- 布局采用左右分屏模式：
+  - 左侧：w-64 固定宽度导航栏，包含菜单和主题切换
+  - 右侧：flex-1 自适应内容区，包含顶部标题栏和内容区域
+  - 使用 flex 布局，无 fixed/absolute 定位，无层级冲突
+- 流式对话修复：
+  - 使用 streamingContentRef 保存累积内容
+  - onComplete 回调中使用 ref.current 获取完整内容
+  - 添加空内容检查和错误提示
+  - 添加加载状态和成功提示
+- 对话框滚动优化：
+  - 使用原生 overflow-y-auto 实现滚动
+  - 自动平滑滚动到最新消息
+  - 自定义滚动条样式，美观且易用
+  - 支持多轮对话的完整显示
+- 多Agent群聊系统（新功能）：
+  - 采用 Map-Reduce 架构：并发发散 + 汇聚统筹
+  - 支持2-N个Agent同时参与对话
+  - 指定决断官Agent进行最终总结
+  - 使用并发请求提升响应速度
+  - 不影响现有1v1对话功能
+  - 修复 Edge Function 变量名冲突问题（judgeSummary）
